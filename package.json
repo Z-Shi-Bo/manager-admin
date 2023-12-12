@@ -1,0 +1,26 @@
+{
+  "name": "manager-admin",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --mode dev",
+    "build": "vite build --mode prod",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
+    "axios": "^1.6.2",
+    "element-plus": "^2.4.3",
+    "pinia": "^2.1.7",
+    "vue": "^3.3.8",
+    "vue-router": "^4.0.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.5.0",
+    "sass": "^1.69.5",
+    "vite": "^5.0.0",
+    "vite-plugin-windicss": "^1.9.2",
+    "windicss": "^3.5.6"
+  }
+}
