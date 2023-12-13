@@ -32,7 +32,7 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import { login } from '@/api/common';
-import { useUserStore } from '@/store/userStore';
+import { useUserStore } from '@/store/useUserStore';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 const userStore = useUserStore();

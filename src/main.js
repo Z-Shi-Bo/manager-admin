@@ -8,8 +8,9 @@ import { createPinia } from 'pinia';
 // 导入路由
 import router from './router';
 // 导入全局样式
-import '@/assets/style/common.scss';
-import '@/assets/style/reset.scss';
+import '@/assets/styles/common.scss';
+import '@/assets/styles/reset.scss';
+
 // 导入windicss样式
 import 'virtual:windi.css';
 import App from './App.vue';

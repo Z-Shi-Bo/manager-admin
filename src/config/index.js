@@ -5,15 +5,15 @@
 const env = import.meta.env.MODE || 'prod';
 const EnvConfig = {
   dev: {
-    baseURL: 'http://127.0.0.1:8000',
+    baseURL: '/api',
     mockURL: 'https://www.fastmock.site/mock/d346d656c55059079713e7d5dd8787b4/api',
   },
   test: {
-    baseURL: 'http://127.0.0.1:8000',
+    baseURL: 'http://127.0.0.1:3000',
     mockURL: 'https://www.fastmock.site/mock/d346d656c55059079713e7d5dd8787b4/api',
   },
   prod: {
-    baseURL: 'http://127.0.0.1:8000',
+    baseURL: 'http://127.0.0.1:3000',
     mockURL: 'https://www.fastmock.site/mock/d346d656c55059079713e7d5dd8787b4/api',
   },
 };
@@ -21,6 +21,6 @@ const EnvConfig = {
 export default {
   env,
   namespace: 'manager-admin',
-  mock: true,
+  mock: false,
   ...EnvConfig[env],
 };

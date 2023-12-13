@@ -14,12 +14,20 @@ export default defineConfig({
   server: {
     open: true,
     port: 8080,
-    // proxy: {
-    //   '/api': {
-    //     target: 'http://127.0.0.1:3000',
-    //     changeOrigin: true,
-    //     rewrite: (path) => path.replace(/^\/api/, ''),
-    //   },
-    // },
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:3000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
+  css: {
+    // 配置scss全局变量
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@import "@/assets/styles/variables.scss";`,
+      },
+    },
   },
 });

@@ -1,10 +1,11 @@
 <template>
   <div class="basic-layout">
-    <div class="nav-side"></div>
+    <div class="nav-side">
+      <menu-side></menu-side>
+    </div>
     <div class="content-right">
       <div class="nav-top">
-        <div class="bread"></div>
-        <div class="user"></div>
+        <nav-header></nav-header>
       </div>
       <div class="wrapper">
         <div class="main-page">
@@ -17,22 +18,20 @@
 
 <script setup>
 import { ref } from 'vue';
+import menuSide from '@/components/menu.vue';
+import navHeader from '@/components/navHeader.vue';
 defineOptions({
   name: 'home',
 });
 </script>
 <style lang="scss" scoped>
 .basic-layout {
-  position: relative;
+  display: flex;
   > .nav-side {
-    position: fixed;
-    width: 200px;
     height: 100vh;
-    overflow-y: auto;
-    background-color: #001529;
   }
   > .content-right {
-    margin-left: 200px;
+    flex: 1;
     > .nav-top {
       height: 50px;
       display: flex;
@@ -44,9 +43,10 @@ defineOptions({
       height: calc(100vh - 50px);
       padding: 20px;
       overflow-y: auto;
+      background-color: $bgColor;
       > .main-page {
         height: 100%;
-        background-color: #fff;
+        background-color: $white;
       }
     }
   }
