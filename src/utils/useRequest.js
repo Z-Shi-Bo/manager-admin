@@ -5,6 +5,7 @@ import axios from 'axios';
 import { ElMessage } from 'element-plus';
 import config from '@/config';
 import router from '@/router';
+import { getItem } from './useStorage';
 
 // 错误的提示信息
 const ERRMESSAGE = {
@@ -36,6 +37,8 @@ if (config.env === 'prod') {
 // 请求拦截器
 service.interceptors.request.use(
   (req) => {
+    const { token } = getItem('user');
+    if (token && !req.headers.Authorization) req.headers.Authorization = `Bearer ${token}`;
     return req;
   },
   (error) => {
