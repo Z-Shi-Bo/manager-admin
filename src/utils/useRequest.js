@@ -5,7 +5,7 @@ import axios from 'axios';
 import { ElMessage } from 'element-plus';
 import config from '@/config';
 import router from '@/router';
-import { getItem } from './useStorage';
+import { getItem, removeItem } from './useStorage';
 
 // 错误的提示信息
 const ERRMESSAGE = {
@@ -37,8 +37,11 @@ if (config.env === 'prod') {
 // 请求拦截器
 service.interceptors.request.use(
   (req) => {
-    const { token } = getItem('user');
-    if (token && !req.headers.Authorization) req.headers.Authorization = `Bearer ${token}`;
+    const userInfo = getItem('user');
+    if (userInfo) {
+      const { token } = userInfo;
+      if (token && !req.headers.Authorization) req.headers.Authorization = `Bearer ${token}`;
+    }
     return req;
   },
   (error) => {
@@ -55,6 +58,7 @@ service.interceptors.response.use(
     } else if (code === 401) {
       ElMessage.error(ERRMESSAGE[code]);
       setTimeout(() => {
+        removeItem('user');
         router.push('/login');
       }, 1000);
       return Promise.reject(ERRMESSAGE[code]);

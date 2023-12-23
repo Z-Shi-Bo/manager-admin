@@ -46,7 +46,6 @@ defineOptions({
       background-color: $bgColor;
       > .main-page {
         height: 100%;
-        background-color: $white;
       }
     }
   }

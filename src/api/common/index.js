@@ -2,7 +2,7 @@
 import service from '@/utils/useRequest';
 
 // 登录接口
-export const login = (data) => service.post('/users/login', data);
+export const login = (data) => service.post('/login', data);
 
 // 消息通知
 export const noticeCount = () => service.get('/users/leave/notice');

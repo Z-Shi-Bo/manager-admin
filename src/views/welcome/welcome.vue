@@ -10,12 +10,15 @@
 
 <script setup>
 import { ref } from 'vue';
+defineOptions({
+  name: 'Welcome',
+});
 </script>
 <style lang="scss" scoped>
 .welcome {
   @apply h-full flex justify-around items-center;
   background: url('@/assets/images/bg.jpg') no-repeat center center/100% 100%;
-  >.content {
+  > .content {
     > .title {
       @apply text-yellow-400 text-3xl font-bold;
     }

@@ -6,8 +6,8 @@
       </div>
       <div class="login-form">
         <el-form :model="form" ref="formRef" :rules="rules">
-          <el-form-item prop="username">
-            <el-input v-model="form.username" placeholder="请输入账号">
+          <el-form-item prop="userName">
+            <el-input v-model="form.userName" placeholder="请输入账号">
               <template #prefix>
                 <el-icon><user /></el-icon>
               </template>
@@ -37,12 +37,12 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const userStore = useUserStore();
 const form = reactive({
-  username: '',
+  userName: '',
   password: '',
   mock: false,
 });
 const rules = {
-  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+  userName: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
   password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
 };
 // 表单实例
