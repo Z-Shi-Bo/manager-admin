@@ -7,3 +7,6 @@ export const getUserListApi = (data) => {
   const str = objToGetParam(data);
   return service.get(`/users/list?${str}`);
 };
+
+// 删除用户
+export const deleteUserApi = (ids) => service.post(`/users/delete`, ids);

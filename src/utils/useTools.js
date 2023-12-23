@@ -2,10 +2,11 @@
  * @description 工具函数
  */
 
+import { ElMessage } from 'element-plus';
+
 /**
  * @description 拼接get请求的查询字符串
  */
-
 export function objToGetParam(obj) {
   let str = '';
   for (let key in obj) {
@@ -19,7 +20,6 @@ export function objToGetParam(obj) {
 /**
  * @description 解析表格日期格式
  */
-
 export function parseDate(date, rule) {
   rule = rule || 'YYYY-MM-DD hh:mm:ss';
 
@@ -39,4 +39,14 @@ export function parseDate(date, rule) {
     }
   }
   return rule;
+}
+
+/**
+ * @description 处理代码异常弹框
+ */
+export function useMessage(message = '', type = 'success') {
+  ElMessage({
+    message,
+    type,
+  });
 }
