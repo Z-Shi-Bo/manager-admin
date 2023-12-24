@@ -16,11 +16,11 @@
       </el-badge>
       <el-dropdown @command="logout">
         <span style="color: #39f" class="text-blue-400">
-          {{ userStore.user.username }}
+          {{ userStore.user.userName ?? ''}}
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item disabled>邮箱：{{ userStore.user.email ?? '' }}</el-dropdown-item>
+            <el-dropdown-item disabled>邮箱：{{ userStore.user.userEmail ?? '' }}</el-dropdown-item>
             <el-dropdown-item command="logout">退出</el-dropdown-item>
           </el-dropdown-menu>
         </template>

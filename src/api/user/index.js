@@ -10,3 +10,9 @@ export const getUserListApi = (data) => {
 
 // 删除用户
 export const deleteUserApi = (ids) => service.post(`/users/delete`, ids);
+
+// 新增用户
+export const addUserApi = (data) => service.post(`/users/add`, data);
+
+// 修改用户
+export const updateUserApi = (data) => service.post(`/users/update`, data);
