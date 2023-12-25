@@ -22,7 +22,7 @@
         <el-button type="primary" @click="handleAdd('add', '创建菜单')">创建</el-button>
       </div>
       <div class="table-box">
-        <el-table :data="tableData" border stripe height="100%">
+        <el-table :data="menuList" row-key="_id" height="100%">
           <el-table-column v-for="(col, index) in tableHeader" :key="index" :prop="col.prop" :label="col.label" :formatter="col.formatter" :width="col.width" align="center"> </el-table-column>
           <el-table-column label="操作" width="240" align="center">
             <template #default="{ row }">
@@ -55,7 +55,7 @@
           <el-input v-model="dialogForm.menuName" placeholder="请输入菜单名称"></el-input>
         </el-form-item>
         <el-form-item label="菜单图标">
-          <el-input v-model="dialogForm.icon"></el-input>
+          <icon-select v-model="dialogForm.icon" />
         </el-form-item>
         <el-form-item label="路由地址">
           <el-input v-model="dialogForm.path" placeholder="请输入路由地址" />
@@ -88,6 +88,7 @@ import { ref, onMounted } from 'vue';
 import { getUserListApi, deleteUserApi, addUserApi, updateUserApi } from '@/api/user';
 import { parseDate } from '@/utils/useTools';
 import { useGetTableData } from '@/utils/useTableAndFormLogic';
+import iconSelect from '@/components/iconSelect.vue';
 defineOptions({
   name: 'Menu',
 });
@@ -123,8 +124,6 @@ const {
   dialogVisible,
   dialogFormRef,
   dialogRules,
-  deptList,
-  roleList,
   dialogTitle,
   resetSearchForm,
   handleCancel,
@@ -163,7 +162,7 @@ const menuList = ref([
     menuName: '系统管理',
     menuCode: '',
     path: '/system',
-    icon: 'el-icon-setting',
+    icon: 'setting',
     order: '0',
     component: '',
     children: [
@@ -442,7 +441,7 @@ const menuList = ref([
     menuState: '1',
     menuName: '审批管理',
     path: '/audit',
-    icon: 'el-icon-s-promotion',
+    icon: 'promotion',
     __v: 0,
     children: [
       {
