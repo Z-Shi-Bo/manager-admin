@@ -14,7 +14,7 @@
             </el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input v-model="form.password" placeholder="请输入密码" show-password>
+            <el-input v-model="form.password" @keyup.enter="onSubmit" placeholder="请输入密码" show-password>
               <template #prefix>
                 <el-icon><lock /></el-icon>
               </template>

@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center">
     <el-icon v-if="modelValue" :size="20" class="mr-2"><component :is="modelValue"></component></el-icon>
-    <el-select :modelValue="modelValue" @change="handleChange">
+    <el-select :modelValue="modelValue" filterable @change="handleChange">
       <el-option v-for="item in icons" :key="item" :label="item" :value="item">
         <span style="float: left">
           <el-icon :size="16">

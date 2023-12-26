@@ -203,13 +203,16 @@ export const useGetTableData = (opt = {}) => {
     dialogVisible.value = true;
   };
   // 编辑
-  const handleEdit = (type, title, row) => {
+  const handleEdit = (type, title, row, editPage = '') => {
     dialogType.value = type;
     dialogTitle.value = title;
     for (const key in dialogForm) {
       if (Object.hasOwnProperty.call(dialogForm, key)) {
         dialogForm[key] = row[key];
       }
+    }
+    if (editPage === 'menu') {
+      dialogForm.parentId = [...row.parentId, row._id].filter((item) => item);
     }
     dialogVisible.value = true;
   };
@@ -218,7 +221,7 @@ export const useGetTableData = (opt = {}) => {
     dialogFormRef.value.validate(async (valid) => {
       if (valid) {
         try {
-          dialogType.value === 'add' ? await opt.onUpdateApi(dialogForm) : await opt.onAddApi(dialogForm);
+          dialogType.value === 'add' ? await opt.onAddApi(dialogForm) : await opt.onUpdateApi(dialogForm);
           useMessage(dialogTitle.value + '成功');
           handleCancel();
           getData();
