@@ -27,7 +27,6 @@
           <el-table-column label="操作" width="240" align="center">
             <template #default="{ row }">
               <div>
-                <el-button size="small" @click="handleEdit('edit', '编辑菜单', row, 'menu')">新增</el-button>
                 <el-button type="primary" size="small" @click="handleEdit('edit', '编辑菜单', row, 'menu')">编辑</el-button>
                 <el-popconfirm width="220" confirm-button-text="确定" cancel-button-text="取消" icon="InfoFilled" title="确定删除么？" @confirm="handleDelete(row)">
                   <template #reference>

@@ -13,7 +13,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useCommonStore } from '@/store/useCommonStore';
-import { menuList } from '@/api/common';
+import { getMenuListApi } from '@/api/menus';
 import treeMenu from '@/components/treeMenu.vue';
 const commonStore = useCommonStore();
 const menuListData = ref([]);
@@ -22,8 +22,8 @@ const activePath = ref(location.hash.slice(1));
 // 获取侧边栏
 const getMenuList = async () => {
   try {
-    const result = await menuList();
-    menuListData.value = result.menuList;
+    const result = await getMenuListApi();
+    menuListData.value = result.list;
   } catch (error) {
     console.error(error);
   }

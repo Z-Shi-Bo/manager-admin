@@ -1,10 +1,145 @@
 <template>
-  <div class="user">角色管理</div>
+  <div class="role common-card">
+    <div class="query-form">
+      <el-form :model="searchForm" label-width="80px" inline>
+        <el-form-item label="角色名称">
+          <el-input v-model="searchForm.roleName" placeholder="请输入角色名称"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="getData">查询</el-button>
+          <el-button @click="resetSearchForm">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="base-table">
+      <div class="action">
+        <el-button type="primary" @click="handleAdd('add', '创建角色')">创建</el-button>
+      </div>
+      <div class="table-box">
+        <el-table :data="tableData" height="100%">
+          <el-table-column v-for="(col, index) in tableHeader" :key="index" :prop="col.prop" :label="col.label" :formatter="col.formatter" :width="col.width" align="center"> </el-table-column>
+          <el-table-column label="操作" width="240" align="center">
+            <template #default="{ row }">
+              <div>
+                <el-button size="small" @click="handleEdit('edit', '编辑菜单', row, 'menu')">编辑</el-button>
+                <el-button type="primary" size="small" @click="handleEdit('edit', '编辑菜单', row, 'menu')">设置权限</el-button>
+                <el-popconfirm width="220" confirm-button-text="确定" cancel-button-text="取消" icon="InfoFilled" title="确定删除么？" @confirm="handleDelete(row)">
+                  <template #reference>
+                    <el-button type="danger" size="small">删除</el-button>
+                  </template>
+                </el-popconfirm>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="page-box">
+        <el-pagination
+          :current-page="searchForm.pageNum"
+          :page-size="searchForm.pageSize"
+          :page-sizes="[20, 30, 40]"
+          background
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalNum"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange" />
+      </div>
+    </div>
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="40%">
+      <el-form :model="dialogForm" ref="dialogFormRef" label-width="100px">
+        <el-form-item label="角色名称">
+          <el-input v-model="dialogForm.roleName" placeholder="请输入角色名称"></el-input>
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input type="textarea" :rows="4" v-model="dialogForm.remark" placeholder="请输入备注" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span>
+          <el-button @click="handleCancel">取消</el-button>
+          <el-button type="primary" @click="handleSubmit">确定</el-button>
+        </span>
+      </template>
+    </el-dialog>
+  </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { getMenuListApi, deleteMenuApi, addMenuApi, updateMenuApi } from '@/api/menus';
+import { parseDate, useMessage } from '@/utils/useTools';
+import { useGetTableData } from '@/utils/useTableAndFormLogic';
+import iconSelect from '@/components/iconSelect.vue';
 defineOptions({
   name: 'Role',
+});
+
+const tableHeader = ref([
+  { prop: 'roleName', label: '角色名称', width: '' },
+  { prop: 'remark', label: '备注', width: '' },
+  {
+    prop: 'permissionList',
+    label: '权限列表',
+    width: '',
+  },
+  {
+    prop: 'createTime',
+    label: '创建时间',
+    width: '',
+    formatter: (row, column, value) => {
+      return parseDate(new Date(value));
+    },
+  },
+]);
+const {
+  searchForm,
+  dialogForm,
+  tableData,
+  totalNum,
+  dialogVisible,
+  dialogFormRef,
+  dialogRules,
+  dialogTitle,
+  resetSearchForm,
+  handleCancel,
+  handleAdd,
+  handleEdit,
+  handleSizeChange,
+  handleCurrentChange,
+  handleSubmit,
+  getData,
+} = useGetTableData({
+  searchForm: {
+    roleName: '',
+    pageNum: 1,
+    pageSize: 10,
+  },
+  dialogForm: {
+    menuType: 1, //菜单类型 1:菜单 2:按钮
+    menuName: '', //菜单名称
+    menuCode: '', //菜单标识符，只有按钮类型才有，用于确定按钮权限
+    path: '', //菜单路由
+    icon: '', //菜单图标
+    component: '', //组件地址
+    parentId: [null], //父菜单ID
+    menuState: 1, //菜单状态 1:正常 2:禁用
+    _id: null, // 菜单Id
+  },
+  getList: getMenuListApi,
+  onAddApi: addMenuApi,
+  onUpdateApi: updateMenuApi,
+});
+// 删除操作
+const handleDelete = async (row) => {
+  try {
+    await deleteMenuApi({ _id: row._id });
+    useMessage('删除成功');
+    getData();
+  } catch (error) {
+    useMessage(error.message, 'error');
+  }
+};
+onMounted(() => {
+  getData();
 });
 </script>
