@@ -21,8 +21,8 @@
           <el-table-column label="操作" width="240" align="center">
             <template #default="{ row }">
               <div>
-                <el-button size="small" @click="handleEdit('edit', '编辑菜单', row, 'menu')">编辑</el-button>
-                <el-button type="primary" size="small" @click="handleEdit('edit', '编辑菜单', row, 'menu')">设置权限</el-button>
+                <el-button size="small" @click="handleEdit('edit', '编辑菜单', row)">编辑</el-button>
+                <el-button type="primary" size="small" @click="handleSetPermission(row)">设置权限</el-button>
                 <el-popconfirm width="220" confirm-button-text="确定" cancel-button-text="取消" icon="InfoFilled" title="确定删除么？" @confirm="handleDelete(row)">
                   <template #reference>
                     <el-button type="danger" size="small">删除</el-button>
@@ -61,15 +61,32 @@
         </span>
       </template>
     </el-dialog>
+    <!-- 设置权限弹框 -->
+    <el-dialog title="权限配置" v-model="permissionDialogVisible" width="40%">
+      <el-form label-width="100px">
+        <el-form-item label="角色名称">
+          {{ currentRoleName }}
+        </el-form-item>
+        <el-form-item label="配置权限">
+          <el-tree :data="permissionList" ref="permissionTreeRef" show-checkbox node-key="_id" :props="defaultProps" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span>
+          <el-button @click="handleCancelPermission">取消</el-button>
+          <el-button type="primary" @click="handleSubmitPermission">确定</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { getMenuListApi, deleteMenuApi, addMenuApi, updateMenuApi } from '@/api/menus';
+import { getRoleListApi, deleteRoleApi, addRoleApi, updateRoleApi } from '@/api/roles';
+import { getMenuListApi } from '@/api/menus';
 import { parseDate, useMessage } from '@/utils/useTools';
 import { useGetTableData } from '@/utils/useTableAndFormLogic';
-import iconSelect from '@/components/iconSelect.vue';
 defineOptions({
   name: 'Role',
 });
@@ -98,7 +115,6 @@ const {
   totalNum,
   dialogVisible,
   dialogFormRef,
-  dialogRules,
   dialogTitle,
   resetSearchForm,
   handleCancel,
@@ -115,31 +131,58 @@ const {
     pageSize: 10,
   },
   dialogForm: {
-    menuType: 1, //菜单类型 1:菜单 2:按钮
-    menuName: '', //菜单名称
-    menuCode: '', //菜单标识符，只有按钮类型才有，用于确定按钮权限
-    path: '', //菜单路由
-    icon: '', //菜单图标
-    component: '', //组件地址
-    parentId: [null], //父菜单ID
-    menuState: 1, //菜单状态 1:正常 2:禁用
-    _id: null, // 菜单Id
+    _id: '',
+    roleName: '',
+    remark: '',
   },
-  getList: getMenuListApi,
-  onAddApi: addMenuApi,
-  onUpdateApi: updateMenuApi,
+  getList: getRoleListApi,
+  onAddApi: addRoleApi,
+  onUpdateApi: updateRoleApi,
 });
 // 删除操作
 const handleDelete = async (row) => {
   try {
-    await deleteMenuApi({ _id: row._id });
+    await deleteRoleApi({ _id: row._id });
     useMessage('删除成功');
     getData();
   } catch (error) {
     useMessage(error.message, 'error');
   }
 };
+
+// 配置权限
+const permissionDialogVisible = ref(false);
+const currentRoleName = ref('');
+const currentRoleId = ref('');
+const defaultProps = {
+  children: 'children',
+  label: 'menuName',
+};
+const permissionList = ref([]);
+const permissionTreeRef = ref(null);
+// 获取菜单列表
+const getMenuList = async () => {
+  const res = await getMenuListApi();
+  permissionList.value = res?.list || [];
+};
+const handleSetPermission = (row) => {
+  currentRoleName.value = row.roleName;
+  currentRoleId.value = row._id;
+  permissionDialogVisible.value = true;
+};
+// 配置权限确定
+const handleSubmitPermission = async () => {
+  const keys = permissionTreeRef.value.getCheckedKeys();
+  console.log(keys);
+};
+// 配置权限取消
+const handleCancelPermission = () => {
+  permissionDialogVisible.value = false;
+  currentRoleId.value = '';
+  currentRoleName.value = '';
+};
 onMounted(() => {
   getData();
+  getMenuList();
 });
 </script>

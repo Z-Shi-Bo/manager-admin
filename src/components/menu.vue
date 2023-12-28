@@ -4,7 +4,7 @@
     <h1 class="title">
       <span :class="{ hide: commonStore.isCollapse }">Manager-Admin</span>
     </h1>
-    <el-menu :default-active="activePath" :collapse-transition="false" router :collapse="commonStore.isCollapse">
+    <el-menu :default-active="activePath" unique-opened :collapse-transition="false" router :collapse="commonStore.isCollapse">
       <tree-menu :list="menuListData"></tree-menu>
     </el-menu>
   </div>
