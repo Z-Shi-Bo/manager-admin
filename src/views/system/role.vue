@@ -18,6 +18,13 @@
       <div class="table-box">
         <el-table :data="tableData" height="100%">
           <el-table-column v-for="(col, index) in tableHeader" :key="index" :prop="col.prop" :label="col.label" :formatter="col.formatter" :width="col.width" align="center"> </el-table-column>
+          <el-table-column label="权限列表" prop="permissionList">
+            <template #default="{ row }">
+              <span v-for="(item, index) in row.permissionList.halfCheckedKeys" :key="index">
+                <el-tag v-if="menuMap[item]" class="mr-2" style="margin-bottom: 4px;">{{ menuMap[item] }}</el-tag>
+              </span>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="240" align="center">
             <template #default="{ row }">
               <div>
@@ -62,13 +69,13 @@
       </template>
     </el-dialog>
     <!-- 设置权限弹框 -->
-    <el-dialog title="权限配置" v-model="permissionDialogVisible" width="40%">
+    <el-dialog title="权限配置" v-model="permissionDialogVisible" destroy-on-close width="40%">
       <el-form label-width="100px">
         <el-form-item label="角色名称">
-          {{ currentRoleName }}
+          <p class="font-bold">{{ currentRoleName }}</p>
         </el-form-item>
         <el-form-item label="配置权限">
-          <el-tree :data="permissionList" ref="permissionTreeRef" show-checkbox node-key="_id" :props="defaultProps" />
+          <el-tree :data="permissionList" ref="permissionTreeRef" default-expand-all show-checkbox node-key="_id" :props="defaultProps" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -82,8 +89,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { getRoleListApi, deleteRoleApi, addRoleApi, updateRoleApi } from '@/api/roles';
+import { ref, onMounted, nextTick } from 'vue';
+import { getRoleListApi, deleteRoleApi, addRoleApi, updateRoleApi, setPermissionApi } from '@/api/roles';
 import { getMenuListApi } from '@/api/menus';
 import { parseDate, useMessage } from '@/utils/useTools';
 import { useGetTableData } from '@/utils/useTableAndFormLogic';
@@ -94,11 +101,6 @@ defineOptions({
 const tableHeader = ref([
   { prop: 'roleName', label: '角色名称', width: '' },
   { prop: 'remark', label: '备注', width: '' },
-  {
-    prop: 'permissionList',
-    label: '权限列表',
-    width: '',
-  },
   {
     prop: 'createTime',
     label: '创建时间',
@@ -134,6 +136,10 @@ const {
     _id: '',
     roleName: '',
     remark: '',
+    permissionList: {
+      checkedKeys: [],
+      halfCheckedKeys: [],
+    },
   },
   getList: getRoleListApi,
   onAddApi: addRoleApi,
@@ -158,22 +164,67 @@ const defaultProps = {
   children: 'children',
   label: 'menuName',
 };
+// 权限列表
 const permissionList = ref([]);
 const permissionTreeRef = ref(null);
+// 菜单映射表
+const menuMap = ref({});
+// 处理菜单映射表逻辑
+const menuMapHandler = (list) => {
+  list.forEach((item) => {
+    if (item.children && item.action) {
+      menuMap.value[item._id] = item.menuName;
+    }
+    if (!item.children && item.menuType === 1 && !item.action) {
+      menuMap.value[item._id] = item.menuName;
+    }
+    if (item.children && !item.action) {
+      menuMapHandler(item.children);
+    }
+  });
+};
 // 获取菜单列表
 const getMenuList = async () => {
   const res = await getMenuListApi();
   permissionList.value = res?.list || [];
+  menuMapHandler(res?.list || []);
+  console.log(menuMap);
 };
 const handleSetPermission = (row) => {
   currentRoleName.value = row.roleName;
   currentRoleId.value = row._id;
+  const { checkedKeys } = row.permissionList;
   permissionDialogVisible.value = true;
+  nextTick(() => {
+    permissionTreeRef.value.setCheckedKeys(checkedKeys);
+  });
 };
 // 配置权限确定
 const handleSubmitPermission = async () => {
-  const keys = permissionTreeRef.value.getCheckedKeys();
-  console.log(keys);
+  try {
+    const nodes = permissionTreeRef.value.getCheckedNodes();
+    const halfNodes = permissionTreeRef.value.getHalfCheckedNodes();
+    const checkedKeys = [];
+    const halfCheckedKeys = [];
+    nodes.map((item) => {
+      if (!item.children) {
+        checkedKeys.push(item._id);
+      } else {
+        halfCheckedKeys.push(item._id);
+      }
+    });
+    if (halfNodes.length) {
+      halfNodes.map((item) => {
+        halfCheckedKeys.push(item._id);
+      });
+    }
+    await setPermissionApi({ _id: currentRoleId.value, permissionList: { checkedKeys, halfCheckedKeys } });
+    useMessage('配置成功');
+    getData();
+    handleCancelPermission();
+  } catch (error) {
+    useMessage('配置失败', 'error');
+  }
 };
 // 配置权限取消
 const handleCancelPermission = () => {

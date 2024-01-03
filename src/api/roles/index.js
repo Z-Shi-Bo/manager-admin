@@ -16,3 +16,6 @@ export const updateRoleApi = (data) => service.post(`/roles/update`, data);
 
 // 删除角色
 export const deleteRoleApi = (ids) => service.post(`/roles/delete`, ids);
+
+// 设置权限
+export const setPermissionApi = (data) => service.post(`/roles/setPermission`, data);
