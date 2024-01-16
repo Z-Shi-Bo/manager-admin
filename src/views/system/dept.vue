@@ -16,7 +16,7 @@
         <el-button type="primary" @click="handleAdd('add', '创建部门')">创建</el-button>
       </div>
       <div class="table-box">
-        <el-table :data="tableData" height="100%">
+        <el-table :data="tableData" row-key="_id" height="100%">
           <el-table-column v-for="(col, index) in tableHeader" :key="index" :prop="col.prop" :label="col.label" :formatter="col.formatter" :width="col.width" align="center"> </el-table-column>
           <el-table-column label="操作" width="240" align="center">
             <template #default="{ row }">
@@ -75,8 +75,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { getRoleListApi, deleteRoleApi, addRoleApi, updateRoleApi, setPermissionApi } from '@/api/roles';
-import { getDeptListApi } from '@/api/depts';
+import { getDeptListApi, addDeptApi, updateDeptApi, deleteDeptApi } from '@/api/depts';
 import { getUserListApi } from '@/api/user';
 import { parseDate, useMessage } from '@/utils/useTools';
 import { useGetTableData } from '@/utils/useTableAndFormLogic';
@@ -129,19 +128,19 @@ const {
   dialogForm: {
     _id: '',
     deptName: '',
-    parentId: '',
+    parentId: [null],
     userName: '',
     userEmail: '',
     updateTime: Date.now(),
   },
   getList: getDeptListApi,
-  onAddApi: addRoleApi,
-  onUpdateApi: updateRoleApi,
+  onAddApi: addDeptApi,
+  onUpdateApi: updateDeptApi,
 });
 // 删除操作
 const handleDelete = async (row) => {
   try {
-    await deleteRoleApi({ _id: row._id });
+    await deleteDeptApi({ _id: row._id });
     useMessage('删除成功');
     getData();
   } catch (error) {
